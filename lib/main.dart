@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex_flutter/pokedex_catalog.dart';
 import 'package:pokedex_flutter/screen_saver.dart';
+import 'package:pokedex_flutter/search_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
       initialRoute: "/",
       routes: {
         "/catalog":(context) => PokeCatalog(),
+        "/search_screen":(context) => SearchScreen(),
       },
     );
   }
