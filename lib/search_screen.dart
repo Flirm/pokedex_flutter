@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_flutter/search_result_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -8,16 +9,13 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  final TextEditingController searchTextController = TextEditingController();
+
 
   void _resetSearch(){
-    print("here");
+    searchTextController.clear();
+    print("here");  
   }
-
-  int _searching = 0;
-  final List<Widget> _screens = [
-    SearchBody(),
-    SearchResultScreen(),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +51,7 @@ class _SearchScreenState extends State<SearchScreen> {
           SizedBox(width: 250,height: 1,),
         ],
       ),
-      body: _screens[_searching],
+      body: SearchBody(searchTextController: searchTextController),
       floatingActionButton: SizedBox(
         height: 100,
         width: 100,
@@ -80,13 +78,15 @@ class _SearchScreenState extends State<SearchScreen> {
 }
 
 class SearchBody extends StatefulWidget {
-  const SearchBody({super.key});
+  final TextEditingController searchTextController;
+
+  const SearchBody({Key? key, required this.searchTextController}) : super(key: key);
 
   @override
   State<SearchBody> createState() => _SearchBodyState();
 }
 
-class _SearchBodyState extends State<SearchBody> {
+class _SearchBodyState extends State<SearchBody> {  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -100,13 +100,14 @@ class _SearchBodyState extends State<SearchBody> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: TextField(
+                controller: widget.searchTextController,
                 textAlign: TextAlign.center,
                 textCapitalization: TextCapitalization.characters,
                 keyboardType: TextInputType.text,
                 cursorColor: Colors.black,
                 cursorErrorColor: Colors.red,
                 decoration: InputDecoration(
-                  hintText: "Digite o nome do pokemon",
+                  hintText: "Digite o nome ou ID do pokemon",
                   hintStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                   fillColor: Colors.white,
                   filled: true,
@@ -126,7 +127,12 @@ class _SearchBodyState extends State<SearchBody> {
             SizedBox(height: 50,),
             IconButton(
               icon: Image(image: AssetImage("images/circle.png"),width: 60,),
-              onPressed: (){}, 
+              onPressed: (){
+                setState(() {
+                  widget.searchTextController.text = widget.searchTextController.text.toLowerCase(); 
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: widget.searchTextController.text)));
+                });
+              }, 
             ),
           ],
         ),
@@ -162,20 +168,5 @@ class _FiltersButtonState extends State<FiltersButton> {
       },
       child: Text("FILTROS", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
     );
-  }
-}
-
-
-class SearchResultScreen extends StatefulWidget {
-  const SearchResultScreen({super.key});
-
-  @override
-  State<SearchResultScreen> createState() => _SearchResultScreenState();
-}
-
-class _SearchResultScreenState extends State<SearchResultScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return const Placeholder();
   }
 }
