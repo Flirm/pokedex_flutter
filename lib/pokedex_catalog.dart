@@ -18,57 +18,51 @@ class _PokeCatalogState extends State<PokeCatalog> {
         ),
         automaticallyImplyLeading: false,
         backgroundColor: Colors.red,
-        actions: [],
+        actions: [
+          Container(
+            alignment: Alignment.topLeft,
+            height: 20,
+            width: 20,
+            decoration: BoxDecoration(color: const Color.fromARGB(255, 255, 42, 42), shape: BoxShape.circle),
+          ),
+          SizedBox(width: 5,),
+          Container(
+            alignment: Alignment.topLeft,
+            height: 20,
+            width: 20,
+            decoration: BoxDecoration(color: Colors.yellow, shape: BoxShape.circle),
+          ),
+          SizedBox(width: 5,),
+          Container(
+            alignment: Alignment.topLeft,
+            height: 20,
+            width: 20,
+            decoration: BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+          ),
+          SizedBox(width: 250,),
+        ],
       ),
       body: BuildCatalog(),
-      bottomNavigationBar: Container(
-        alignment: Alignment.bottomCenter,
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                height: 70,
-                width: double.infinity,
-                color: Colors.red,
-              )
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                alignment: Alignment.bottomCenter,
-                height: 110,
-                width: double.infinity,
-                decoration: BoxDecoration(color: Colors.red, shape: BoxShape.circle),
-              )
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child:Container(
-                    height: 95,
-                    decoration: BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                  )
-                ),
-                SizedBox(height: 7,)
-              ]
-            ),
-            Container(
-              alignment: Alignment.bottomCenter,
-              child: SizedBox(
-                height: 110,
-                width: 110,
-                child: IconButton(
-                  icon: Image(image: AssetImage("images/pokeball.png"),),
-                  onPressed: (){Navigator.pop(context);},
-                  )
-              )
-            )
-          ],
-        )
+      floatingActionButton: SizedBox(
+        height: 100,
+        width: 100,
+        child: FloatingActionButton(
+          heroTag: 'fab_catalog', 
+          backgroundColor: Colors.white,
+          shape: const CircleBorder(),
+          onPressed: () {Navigator.pop(context);},
+          child: const Image(
+            image: AssetImage("images/pokeball.png"),
+            height: 100,
+          ),
+        ),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      bottomNavigationBar: BottomAppBar(
+        color: Colors.red,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 6,
+        height: 60,
       ),
     );
   }
@@ -84,6 +78,6 @@ class BuildCatalog extends StatefulWidget {
 class _BuildCatalogState extends State<BuildCatalog> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Center(child: Container(width: 50,height: 50, decoration: BoxDecoration(color: Colors.black),),);
   }
 }
