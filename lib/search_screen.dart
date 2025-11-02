@@ -86,7 +86,24 @@ class SearchBody extends StatefulWidget {
   State<SearchBody> createState() => _SearchBodyState();
 }
 
+enum SearchType {name, type, generation, habitat}
+
 class _SearchBodyState extends State<SearchBody> {  
+  SearchType? _currSearchType = SearchType.name;
+
+  String getStringST(SearchType? searchType){
+    if(searchType == SearchType.name){return "pokemon";}
+    if(searchType == SearchType.type){return "type";}
+    if(searchType == SearchType.generation){return "generation";}
+    if(searchType == SearchType.habitat){return "pokemon-habitat";}
+    return "pokemon";
+  }
+
+  void changeSearchType(SearchType? st){
+    _currSearchType = st;
+    setState((){});
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,7 +124,7 @@ class _SearchBodyState extends State<SearchBody> {
                 cursorColor: Colors.black,
                 cursorErrorColor: Colors.red,
                 decoration: InputDecoration(
-                  hintText: "Digite o nome ou ID do pokemon",
+                  hintText: "Digite o nome ou ID do(a) ${getStringST(_currSearchType)}",
                   hintStyle: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                   fillColor: Colors.white,
                   filled: true,
@@ -123,14 +140,14 @@ class _SearchBodyState extends State<SearchBody> {
               ),
             ),
             SizedBox(height: 10,),
-            FiltersButton(),
+            FiltersButton(callback: changeSearchType,),
             SizedBox(height: 50,),
             IconButton(
               icon: Image(image: AssetImage("images/circle.png"),width: 60,),
               onPressed: (){
                 setState(() {
-                  widget.searchTextController.text = widget.searchTextController.text.toLowerCase(); 
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: widget.searchTextController.text)));
+                  String txt = "${getStringST(_currSearchType)}/${widget.searchTextController.text.toLowerCase()}";
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: txt)));
                 });
               }, 
             ),
@@ -142,13 +159,17 @@ class _SearchBodyState extends State<SearchBody> {
 }
 
 class FiltersButton extends StatefulWidget {
-  const FiltersButton({super.key});
+  final Function(SearchType?) callback;
+
+  const FiltersButton({Key? key, required this.callback}) : super(key: key);
 
   @override
   State<FiltersButton> createState() => _FiltersButtonState();
 }
 
 class _FiltersButtonState extends State<FiltersButton> {
+  SearchType? currSearch = SearchType.name;
+
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
@@ -161,12 +182,68 @@ class _FiltersButtonState extends State<FiltersButton> {
       onPressed: (){
         showModalBottomSheet(
           context: context, 
+          backgroundColor: Colors.white,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
           builder: (context){
-            return Container();
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildFilterTile(SearchType.name, "Nome"),
+                  _buildFilterTile(SearchType.type, "Tipo"),
+                  _buildFilterTile(SearchType.generation, "Geração"),
+                  _buildFilterTile(SearchType.habitat, "Habitat"),
+                ],
+              ),
+            );
           }
         );
       },
       child: Text("FILTROS", style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),),
+    );
+  }
+
+  Widget _buildFilterTile(SearchType type, String label) {
+    final bool isSelected = currSearch == type;
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          currSearch = type;
+        });
+        widget.callback(type);
+        Navigator.pop(context);
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.symmetric(vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.red : Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          border: Border.all(
+            color: isSelected ? Colors.red : Colors.grey.shade400,
+            width: 2,
+          ),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : Colors.black87,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
