@@ -149,7 +149,7 @@ class _FiltersButtonState extends State<FiltersButton> {
       height: 50,
       minWidth: 150,
       color: Colors.red,
-      shape: RoundedRectangleBorder( // 👈 bordas arredondadas
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
       ),
       onPressed: (){
