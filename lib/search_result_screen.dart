@@ -15,7 +15,7 @@ class SearchResultScreen extends StatefulWidget {
 class _SearchResultScreenState extends State<SearchResultScreen> {
 
   Future<Map> getSearchURL() async{
-    String url = "https://pokeapi.co/api/v2/pokemon/${widget.searchText}";
+    String url = "https://pokeapi.co/api/v2/${widget.searchText}";
     print(url);
     final response = await http.get(Uri.parse(url));
     print(jsonDecode(response.body)["name"]);
