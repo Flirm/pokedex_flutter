@@ -14,7 +14,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _resetSearch(){
     searchTextController.clear();
-    print("here");  
   }
 
   @override
@@ -147,7 +146,7 @@ class _SearchBodyState extends State<SearchBody> {
               onPressed: (){
                 setState(() {
                   String txt = "${getStringST(_currSearchType)}/${widget.searchTextController.text.toLowerCase()}";
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: txt)));
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: txt, searchType: _currSearchType,)));
                 });
               }, 
             ),
