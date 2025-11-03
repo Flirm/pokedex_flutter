@@ -82,10 +82,17 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         future: _futureData,
         builder: (context, snapshot){
           if(snapshot.connectionState == ConnectionState.done){
+            final pokemons = snapshot.data!["pokemon"] ?? snapshot.data!["pokemon_species"];
             return ListView.builder(
               itemCount: 20,
               itemBuilder: (context, index){
-                return pokemonListItem();
+                Map pokemon = pokemons[index];
+                String nome = pokemon["name"] ?? pokemon["pokemon"]["name"];
+                nome = '${nome[0].toUpperCase()}${nome.substring(1)}';
+                String url = pokemon["url"] ?? pokemon["pokemon"]["url"];
+                Match? m = RegExp(r'/(\d+)/?$').firstMatch(url);
+                String id = m==null? "" : m.group(1)!;
+                return pokemonListItem(nome, id);
               },
             );
           }
@@ -111,7 +118,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     );
   }
 
-  Widget pokemonListItem(){
+  Widget pokemonListItem(String nome, String id){
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: GestureDetector(
@@ -135,13 +142,13 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: Row(
                   children: [
-                    Image.network(getSpriteImageURL("1"), height: 80,), //TODO: colocar id correspondente
+                    Image.network(getSpriteImageURL(id), height: 80,), //TODO: colocar id correspondente
                     SizedBox(width: 15,),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "No. 0", //TODO: colocar id correspondente
+                          "No. $id", //TODO: colocar id correspondente
                           style: TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.bold,
@@ -149,16 +156,15 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
                           ),
                         ),
                         Text(
-                          "Bulbasaur", //TODO: colocar nome correspondente
+                          nome, //TODO: colocar nome correspondente
                           style: TextStyle(
                             color: Colors.black87,
                             fontWeight: FontWeight.bold,
                             fontSize: 20,
                           ),
                         ),
-                        Image.network(getTypeImageURL("6"), height: 15,) //TODO: colocar id correspondente
-                    ],),
-                    
+                      ],
+                    ),
                   ]
                 )
               ),
