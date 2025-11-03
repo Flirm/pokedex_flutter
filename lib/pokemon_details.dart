@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class PokemonDetails extends StatefulWidget {
-  const PokemonDetails({super.key});
+  final String pokemonId;
+
+  const PokemonDetails({Key? key, required this.pokemonId}) : super(key: key);
 
   @override
   State<PokemonDetails> createState() => _PokemonDetailsState();
