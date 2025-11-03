@@ -6,29 +6,6 @@ import 'package:pokedex_flutter/pokemon_details.dart';
 import 'package:pokedex_flutter/search_screen.dart';
 
 
-Future<Map<String, dynamic>> getSearchURL(String? searchString) async {
-    final url = "https://pokeapi.co/api/v2/$searchString";
-    final response;
-    print(url);
-    try{
-      response = await http.get(Uri.parse(url));
-    }catch(e){
-      throw e;
-    }
-    if (response.statusCode != 200) {
-      throw Exception("Erro ao buscar dados da API");
-    }
-    final data = json.decode(response.body) as Map<String, dynamic>;
-    return data;
-}
-String getTypeImageURL(String? typeInt){
-  return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/legends-arceus/$typeInt.png";
-}
-String getSpriteImageURL(String? pokemonId){
-  return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$pokemonId.png";
-}
-
-
 class SearchResultScreen extends StatefulWidget {
   final String? searchText;
   final SearchType? searchType;
@@ -45,9 +22,28 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState(){
     super.initState();
-    _futureData = getSearchURL(widget.searchText);
+    //_futureData = getSearchResult(widget.searchText);
+    _futureData = getSearchResult(widget.searchText);
   }
 
+  Future<Map<String,dynamic>> getSearchResult(String? searchString) async {
+    final url = "https://pokeapi.co/api/v2/$searchString";
+    print(url);
+    final response = await http.get(Uri.parse(url));
+    if(response.statusCode == 200){
+      final data = json.decode(response.body) as Map<String, dynamic>;
+      return data;
+    }else{
+      throw Exception("Erro na requisição");
+    }
+  }
+  String getTypeImageURL(String? typeInt){
+    return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/legends-arceus/$typeInt.png";
+  }
+  String getSpriteImageURL(String? pokemonId){
+    return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$pokemonId.png";
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,12 +81,16 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       body: FutureBuilder<Map>(
         future: _futureData,
         builder: (context, snapshot){
-          return ListView.builder(
-            itemCount: 20,
-            itemBuilder: (context, index){
-              return pokemonListItem();
-            },
-          );
+          if(snapshot.connectionState == ConnectionState.done){
+            return ListView.builder(
+              itemCount: 20,
+              itemBuilder: (context, index){
+                return pokemonListItem();
+              },
+            );
+          }
+          return Center(child: CircularProgressIndicator(color: Colors.red),);
+          
         },
       ),
       floatingActionButton: SizedBox(
@@ -108,12 +108,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: BottomAppBar(
-        color: Colors.red,
-        shape: const CircularNotchedRectangle(),
-        notchMargin: 6,
-        height: 60,
-      ),
     );
   }
 
