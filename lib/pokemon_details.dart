@@ -47,7 +47,6 @@ int getTypeIntFromString(String type){
 
 class _PokemonDetailsState extends State<PokemonDetails> {
   late Future<List<Map<String, dynamic>>> _futureData;
-  late Future<List<Map<String, dynamic>>> _futureEvoData;
 
   @override
   void initState(){
