@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokedex_flutter/pokemon_details.dart';
-import 'package:pokedex_flutter/search_screen.dart';
-
 
 class SearchResultScreen extends StatefulWidget {
   final String? searchText;
