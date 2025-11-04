@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex_flutter/pokemon_details.dart';
 import 'package:pokedex_flutter/search_result_screen.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -146,7 +147,19 @@ class _SearchBodyState extends State<SearchBody> {
               onPressed: (){
                 setState(() {
                   String txt = "${getStringST(_currSearchType)}/${widget.searchTextController.text.toLowerCase()}";
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: txt, searchType: _currSearchType,)));
+                  if(widget.searchTextController.text == ""){
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text("Você precisa escrever algum nome ou ID", style: TextStyle(fontWeight: FontWeight.bold),),)
+                    );
+                  }
+                  else if(_currSearchType == SearchType.name){
+                    Match? m = RegExp(r'/(\d+)/?$').firstMatch(txt);
+                    String id = m==null? "" : m.group(1)!;
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetails(pokemonId: id)));
+                  }
+                  else{
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: txt)));
+                  }
                 });
               }, 
             ),
