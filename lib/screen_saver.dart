@@ -38,7 +38,8 @@ class _ScreenSaverState extends State<ScreenSaver> {
                 height: 150,
                 width: 150,
                 child: IconButton(
-                  onPressed: (){Navigator.pushNamed(context, "/catalog");}, 
+                  //onPressed: (){Navigator.pushNamed(context, "/catalog");}, 
+                  onPressed: (){Navigator.pushNamed(context, "/search_screen");},
                   icon: Image(image: AssetImage('images/pokeball.png')),
                   iconSize: 5,
                 ),
