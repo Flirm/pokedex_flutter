@@ -8,9 +8,8 @@ import 'package:pokedex_flutter/search_screen.dart';
 
 class SearchResultScreen extends StatefulWidget {
   final String? searchText;
-  final SearchType? searchType;
 
-  const SearchResultScreen({Key? key, required this.searchText, required this.searchType}) : super(key: key);
+  const SearchResultScreen({Key? key, required this.searchText}) : super(key: key);
 
   @override
   State<SearchResultScreen> createState() => _SearchResultScreenState();
@@ -22,7 +21,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   @override
   void initState(){
     super.initState();
-    //_futureData = getSearchResult(widget.searchText);
     _futureData = getSearchResult(widget.searchText);
   }
 
@@ -36,9 +34,6 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
     }else{
       throw Exception("Erro na requisição");
     }
-  }
-  String getTypeImageURL(String? typeInt){
-    return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-viii/legends-arceus/$typeInt.png";
   }
   String getSpriteImageURL(String? pokemonId){
     return "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/$pokemonId.png";
@@ -82,9 +77,12 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         future: _futureData,
         builder: (context, snapshot){
           if(snapshot.connectionState == ConnectionState.done){
+            if(snapshot.hasError){
+              return Center(child: Text("Erro na pesquisa", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),));
+            }
             final pokemons = snapshot.data!["pokemon"] ?? snapshot.data!["pokemon_species"];
             return ListView.builder(
-              itemCount: 20,
+              itemCount: pokemons.length,
               itemBuilder: (context, index){
                 Map pokemon = pokemons[index];
                 String nome = pokemon["name"] ?? pokemon["pokemon"]["name"];
@@ -123,7 +121,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
       padding: EdgeInsets.symmetric(horizontal: 5),
       child: GestureDetector(
         onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetails(pokemonId: "1")));
+          Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetails(pokemonId: id)));
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
@@ -142,29 +140,39 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
               Expanded(
                 child: Row(
                   children: [
-                    Image.network(getSpriteImageURL(id), height: 80,), //TODO: colocar id correspondente
-                    SizedBox(width: 15,),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "No. $id", //TODO: colocar id correspondente
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Text(
-                          nome, //TODO: colocar nome correspondente
-                          style: TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
+                    Image.network(
+                      getSpriteImageURL(id), 
+                      height: 80,
+                      errorBuilder: (context, error, stackTrace){
+                        return const Icon(Icons.error, color: Colors.red, size: 80,);
+                      },
                     ),
+                    SizedBox(width: 15,),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "No. $id",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Text(
+                            nome,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    
                   ]
                 )
               ),
