@@ -153,9 +153,7 @@ class _SearchBodyState extends State<SearchBody> {
                     );
                   }
                   else if(_currSearchType == SearchType.name){
-                    Match? m = RegExp(r'/(\d+)/?$').firstMatch(txt);
-                    String id = m==null? "" : m.group(1)!;
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetails(pokemonId: id)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => PokemonDetails(pokemonId: widget.searchTextController.text)));
                   }
                   else{
                     Navigator.push(context, MaterialPageRoute(builder: (context) => SearchResultScreen(searchText: txt)));
